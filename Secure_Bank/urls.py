@@ -17,6 +17,12 @@ from django.contrib import admin
 from django.urls import path, include
 
 urlpatterns = [
-    path('', include('home.urls')),
-    path('admin/', admin.site.urls),
+    path('', include('login.urls')),
+    path('admin/', admin.site.urls,name='admin'),
+    path('create_account/', include('create_account.urls',namespace='create_account')),
+    path('login/', include('login.urls',namespace='login')),
+    path('user_home/', include('user_home.urls')),
+    path('transaction/', include('transactions.urls')),
+    path('internal_user/', include('internal_user.urls')),
+    path('admin_app/', include('admin_app.urls'))
 ]
