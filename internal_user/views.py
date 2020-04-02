@@ -7,6 +7,22 @@ from django.conf import settings
 from internal_user.approvals import _viewRequests, _updateRequest
 from internal_user.utils import render_to_pdf,verify_file
 
+customers = [
+    {
+        'customerName': 'James Karen',
+        'customerId': 1,
+        'accountId': 1,
+        'accountType': 'Savings'
+    },
+    {
+        'customerName': 'Jane Doe',
+        'customerId': 2,
+        'accountId': 2,
+        'accountType': 'Checking'
+    }
+]
+
+
 def initFundDeposit(request):
     return render(request, 'init_fund_deposit.html')
 
@@ -75,6 +91,7 @@ def verifyCheque(request):
 
 def initVerifyCheque(request):
     return render(request, 'init_verify.html')
+
 
 def searchCustomer(request):
     context = {
