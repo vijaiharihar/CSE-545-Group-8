@@ -6,22 +6,7 @@ from .forms import FundDepositForm, IssueChequeForm, CustomerForm
 from django.conf import settings
 from internal_user.approvals import _viewRequests, _updateRequest
 from internal_user.utils import render_to_pdf,verify_file
-
-customers = [
-    {
-        'customerName': 'James Karen',
-        'customerId': 1,
-        'accountId': 1,
-        'accountType': 'Savings'
-    },
-    {
-        'customerName': 'Jane Doe',
-        'customerId': 2,
-        'accountId': 2,
-        'accountType': 'Checking'
-    }
-]
-
+from home.models import Account, Cheque
 
 def initFundDeposit(request):
     return render(request, 'init_fund_deposit.html')
@@ -59,22 +44,28 @@ def issueCheque(request):
     if request.method == 'POST':
         form = IssueChequeForm(request.POST)
         if form.is_valid():
+            account_object = Account.objects.get(account_number=form.cleaned_data.get('accountId'))
             chequeAmount = form.cleaned_data.get('chequeAmount')
-            ## backend code goes here
-            messages.success(request, f'Cheque Issued successfully {chequeAmount}')
-            cheque_id = 222
-            data = {
-                'pay_to':form.cleaned_data.get('recipientName'),
-                'cheque_id': cheque_id,
-                'amount': form.cleaned_data.get('chequeAmount'),
-            }
-            pdf = render_to_pdf('pdf_template.html', data)
-            if pdf:
-                response = HttpResponse(pdf, content_type='application/pdf')
-                filename = "Cheque_"+str(cheque_id)+".pdf"
-                content = "attachment; filename=%s" % (filename)
-                response['Content-Disposition'] = content
-                return response
+            if account_object.account_balance > chequeAmount:
+                ## backend code goes here
+                cheque = Cheque(recipient=form.cleaned_data.get('recipientName'), amount=form.cleaned_data.get('chequeAmount'))
+                messages.success(request, f'Cheque Issued successfully {chequeAmount}')
+                cheque_id = cheque.id
+                data = {
+                    'pay_to':form.cleaned_data.get('recipientName'),
+                    'cheque_id': cheque_id,
+                    'amount': form.cleaned_data.get('chequeAmount'),
+                }
+                pdf = render_to_pdf('pdf_template.html', data)
+                cheque.save()
+                if pdf:
+                    response = HttpResponse(pdf, content_type='application/pdf')
+                    filename = "Cheque_"+str(cheque_id)+".pdf"
+                    content = "attachment; filename=%s" % (filename)
+                    response['Content-Disposition'] = content
+                    return response
+            else:
+                return render(request, 'failed.html', {'failure': '500 Error: Account not found.'}, status=500)
 
 def verifyCheque(request):
     try:
