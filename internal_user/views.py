@@ -4,9 +4,25 @@ from django.contrib import messages
 
 from .forms import FundDepositForm, IssueChequeForm, CustomerForm
 from django.conf import settings
-from internal_user.approvals import _viewRequests, _updateRequest
+from internal_user.approvals import _viewRequests, _updateRequest, _view_updates, _approve_update, _view_open_accs,_approve_open_request,_view_close_accs,_approve_close_request,_viewInternalRequests,_updateInternalRequest
 from internal_user.utils import render_to_pdf,verify_file
 from home.models import Account, Cheque
+
+customers = [
+    {
+        'customerName': 'James Karen',
+        'customerId': 1,
+        'accountId': 1,
+        'accountType': 'Savings'
+    },
+    {
+        'customerName': 'Jane Doe',
+        'customerId': 2,
+        'accountId': 2,
+        'accountType': 'Checking'
+    }
+]
+
 
 def initFundDeposit(request):
     return render(request, 'init_fund_deposit.html')
@@ -157,3 +173,27 @@ def viewRequests(request):
 
 def updateRequest(request):
     return _updateRequest(request)
+
+def viewInternalRequests(request):
+    return _viewInternalRequests(request)
+
+def view_updates(request):
+    return _view_updates(request)
+
+def view_open_accs(request):
+    return _view_open_accs(request)
+
+def view_close_accs(request):
+    return _view_close_accs(request)
+
+def updateInternalRequest(request):
+    return _updateInternalRequest(request)
+
+def approve_update(request):
+    return _approve_update(request)
+
+def approve_open_request(request):
+    return _approve_open_request(request)
+
+def approve_close_request(request):
+    return _approve_close_request(request)

@@ -35,6 +35,7 @@ class PendingProfileUpdate(models.Model):
     city = models.CharField(max_length=20,validators=[alphanumeric])
     state = models.CharField(max_length=20,validators=[alphanumeric])
     zip_code = models.IntegerField()
+    flag = models.BooleanField(default=False)
     user = models.ForeignKey(User,related_name="Pprofile_User_id", on_delete=models.CASCADE,default='')
 
     def __str__(self):
@@ -99,9 +100,9 @@ class Requests(models.Model):
 
 class Tiers(models.Model):
     ASSIGNED_TYPE = (
-    ('TIER1','TIER1'),
-    ('TIER2', 'TIER2'),
-    ('TIER3','TIER3'),
+    ('Tier_1','Tier_1'),
+    ('Tier_2', 'Tier_2'),
+    ('Admin','Admin'),
     )
     tier_status = models.CharField(max_length=20,choices=ASSIGNED_TYPE)
 

@@ -39,6 +39,84 @@
 
     }
 
+
+
+    function updateInternalRequest(requestId, requestType, status){
+    var ele = event.srcElement;
+    if(status=='approve'){
+        ele.nextElementSibling.disabled = true;
+    }
+    else{
+        ele.previousElementSibling.disabled = true;
+     }
+     $.ajax({
+          type: 'POST',
+          url: './updateInternalRequest',
+          data: {'requestId':requestId, 'requestType':requestType, 'status':status,  csrfmiddlewaretoken: '{{ csrf_token }}'},
+          success: function(data){
+            alert('Request ' + status +'. Request ID:' + requestId);
+          }});
+
+    }
+
+
+    function approve_update(requestId, requestType, status){
+    var ele = event.srcElement;
+    if(status=='approve'){
+        ele.nextElementSibling.disabled = true;
+    }
+    else{
+        ele.previousElementSibling.disabled = true;
+     }
+     $.ajax({
+          type: 'POST',
+          url: './ApproveUpdate',
+          data: {'requestId':requestId, 'requestType':requestType, 'status':status,  csrfmiddlewaretoken: '{{ csrf_token }}'},
+          success: function(data){
+            alert('Request ' + status +'. Request ID:' + requestId);
+          }});
+
+    }
+
+    function approve_open_request(requestId, requestType, status, account_number){
+    var ele = event.srcElement;
+    if(status=='approve'){
+        ele.nextElementSibling.disabled = true;
+    }
+    else{
+        ele.previousElementSibling.disabled = true;
+     }
+     $.ajax({
+          type: 'POST',
+          url: './ApproveUpdate',
+          data: {'requestId':requestId, 'requestType':requestType, 'status':status, 'account_number':account_number ,csrfmiddlewaretoken: '{{ csrf_token }}'},
+          success: function(data){
+            alert('Request ' + status +'. Request ID:' + requestId);
+          }});
+
+    }
+
+
+    function approve_close_request(requestId, requestType, status, account_number){
+    var ele = event.srcElement;
+    if(status=='approve'){
+        ele.nextElementSibling.disabled = true;
+    }
+    else{
+        ele.previousElementSibling.disabled = true;
+     }
+     $.ajax({
+          type: 'POST',
+          url: './ApproveClose',
+          data: {'requestId':requestId, 'requestType':requestType, 'status':status, 'account_number':account_number ,csrfmiddlewaretoken: '{{ csrf_token }}'},
+          success: function(data){
+            alert('Request ' + status +'. Request ID:' + requestId);
+          }});
+
+    }
+
+
+
   </script>
 {% endblock %}
 {% block content %}
@@ -112,6 +190,165 @@
                     <td>
                         <input type="submit" value="Approve" onclick="this.disabled=true;this.closest('input').disabled=true;updateRequest('{{prof.user.username}}', 'user_registration', 'approve')">
                         <input type="submit" value="Reject" onclick="this.disabled=true;updateRequest('{{prof.user.username}}', 'user_registration', 'reject')">
+                    </td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+</div>
+{%endif%}
+
+
+
+{%if unapproved_internal_profiles %}
+<div>
+    <div>
+        <h2>Pending Internal User Registrations</h2><br><br>
+    </div>
+    <div>
+        <table class="table">
+            <thead class="thead-dark">
+               <tr>
+                  <th>User name</th>
+                  <th>Name</th>
+                  <th>City</th>
+                  <th>State</th>
+                  <th>Zip Code</th>
+                  <th>Mobile Number</th>                  
+                  <th>Birth date</th>
+                  <th>Email Verified</th> 
+              </tr>
+            </thead>
+
+          {% for prof in unapproved_internal_profiles %}
+            <tr>
+                    <td>{{prof.user.username}}</td>
+                    <td>{{prof.user.first_name}}</td>
+                    <td>{{prof.city}}</td>
+                    <td>{{prof.state}}</td>
+                    <td>{{prof.zip_code}}</td>
+                    <td>{{prof.mobile_number}}</td>
+                    <td>{{prof.birthdate}}</td>
+                    <td>{{prof.user.is_active}}</td>
+                    <td>
+                        <input type="submit" value="Approve" onclick="this.disabled=true;this.closest('input').disabled=true;updateInternalRequest('{{prof.user.username}}', 'internal_user_registration', 'approve')">
+                        <input type="submit" value="Reject" onclick="this.disabled=true;updateInternalRequest('{{prof.user.username}}', 'internal_user_registration', 'reject')">
+                    </td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+</div>
+{%endif%}
+
+
+
+{%if unapproved_updates %}
+<div>
+    <div>
+        <h2>Pending User Updates</h2><br><br>
+    </div>
+    <div>
+        <table class="table">
+            <thead class="thead-dark">
+               <tr>
+                  <th>User name</th>
+                  <th>Name</th>
+                  <th>City</th>
+                  <th>State</th>
+                  <th>Zip Code</th>
+                  <th>Mobile Number</th>                  
+                  <th>Address</th>
+                  <th>Update Approved</th> 
+              </tr>
+            </thead>
+
+          {% for prof in unapproved_updates %}
+            <tr>
+                    <td>{{prof.user.username}}</td>
+                    <td>{{prof.user.first_name}}</td>
+                    <td>{{prof.city}}</td>
+                    <td>{{prof.state}}</td>
+                    <td>{{prof.zip_code}}</td>
+                    <td>{{prof.mobile_number}}</td>
+                    <td>{{prof.street_address}}</td>
+                    <td>{{prof.flag}}</td>
+                    <td>
+                        <input type="submit" value="Approve" onclick="this.disabled=true;this.closest('input').disabled=true;approve_update('{{prof.user.username}}', 'updates_approval', 'approve')">
+                        <input type="submit" value="Reject" onclick="this.disabled=true;approve_update('{{prof.user.username}}', 'updates_approval', 'reject')">
+                    </td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+</div>
+{%endif%}
+
+
+
+{%if open_accs %}
+<div>
+    <div>
+        <h2>Pending Open Bank Account Requests</h2><br><br>
+    </div>
+    <div>
+        <table class="table">
+            <thead class="thead-dark">
+               <tr>
+                  <th>User name</th>
+                  <th>Name</th>
+                  <th>Account No.</th>
+                  <th>Account Balance</th>
+                  <th>Approved</th>
+              </tr>
+            </thead>
+
+          {% for prof in open_accs %}
+            <tr>
+                    <td>{{prof.user.username}}</td>
+                    <td>{{prof.user.first_name}}</td>
+                    <td>{{prof.account_number}}</td>
+                    <td>{{prof.account_balance}}</td>
+                    <td>{{prof.flag}}</td>
+                    <td>
+                        <input type="submit" value="Approve" onclick="this.disabled=true;this.closest('input').disabled=true;approve_open_request('{{prof.user.username}}', 'open_accs', 'approve', '{{prof.account_number}}')">
+                        <input type="submit" value="Reject" onclick="this.disabled=true;approve_open_request('{{prof.user.username}}', 'open_accs', 'reject','{{prof.account_number}}')">
+                    </td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+</div>
+{%endif%}
+
+
+{%if close_accs %}
+<div>
+    <div>
+        <h2>Pending Close Bank Account Requests</h2><br><br>
+    </div>
+    <div>
+        <table class="table">
+            <thead class="thead-dark">
+               <tr>
+                  <th>User name</th>
+                  <th>Name</th>
+                  <th>Account No.</th>
+                  <th>Account Balance</th>
+                  <th>To delete?</th>
+              </tr>
+            </thead>
+
+          {% for prof in close_accs %}
+            <tr>
+                    <td>{{prof.user.username}}</td>
+                    <td>{{prof.user.first_name}}</td>
+                    <td>{{prof.account_number}}</td>
+                    <td>{{prof.account_balance}}</td>
+                    <td>{{prof.to_delete}}</td>
+                    <td>
+                        <input type="submit" value="Approve" onclick="this.disabled=true;this.closest('input').disabled=true;approve_close_request('{{prof.user.username}}', 'close_accs', 'approve', '{{prof.account_number}}')">
+                        <input type="submit" value="Reject" onclick="this.disabled=true;approve_close_request('{{prof.user.username}}', 'close_accs', 'reject','{{prof.account_number}}')">
                     </td>
             </tr>
             {% endfor %}

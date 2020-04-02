@@ -33,8 +33,8 @@ def user_home(request):
     else:
         return HttpResponse('Try again!')
 def user_logout(request):
-	logout(request)
-	return HttpResponseRedirect('/')
+    logout(request)
+    return HttpResponseRedirect('/')
 
 def appointment(request):
     profile_instance = models.Profile.objects.get(user=request.user)
