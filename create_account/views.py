@@ -68,6 +68,7 @@ def homepage(request):
     return render(request,'create_account/register.html',context)
 
 def activate(request, uidb64, token):
+    user_instance=User.objects.get(username=request.session['user'])
     try:
         uid = force_text(urlsafe_base64_decode(uidb64))
         user = User.objects.get(pk=uid)
@@ -77,7 +78,9 @@ def activate(request, uidb64, token):
         user.delete()
         return HttpResponse('Activation link has expired!')
     if user is not None and account_activation_token.check_token(user, token):
-        return HttpResponseRedirect('/create_account/phone_otp')
+        user_instance.is_active = True
+        user_instance.save()
+        return HttpResponseRedirect('/login')
     else:
         user.delete()
         return HttpResponse('Activation link is invalid!')

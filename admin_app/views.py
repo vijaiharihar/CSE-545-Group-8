@@ -2,6 +2,7 @@ from django.shortcuts import render,redirect
 from .forms import EmployeeForm
 from django.contrib import messages
 from django.conf import settings
+from django.http import HttpResponse
 
 def createEmployee(request):
     if request.method == 'POST':
@@ -59,4 +60,8 @@ def searchEmployee(request):
     return render(request, 'view_employee.html')
 
 def systemLog(request):
-    return render(request, 'system_log.html')
+    filename = 'system_log.log'
+    with open(filename, 'rb') as log:
+        response = HttpResponse(log, content_type='text/plain')
+        response['Content-Disposition'] = "attachment; filename=%s" % filename
+        return response
