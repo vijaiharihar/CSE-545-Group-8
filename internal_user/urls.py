@@ -1,5 +1,4 @@
 """Secure_Bank URL Configuration
-
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/3.0/topics/http/urls/
 Examples:
@@ -38,7 +37,14 @@ urlpatterns = [
     path('deleteCustomer', views.deleteCustomer, name='delete-customer'),
     path('viewRequests', views.viewRequests, name='view-requests'),
     path('', views.viewRequests, name='view-requests'),
+    path('viewInternalRequests', views.viewInternalRequests, name='view-internal-requests'),
+    path('viewUpdates', views.view_updates, name='view-updates'),
+    path('viewOpenRequests',views.view_open_accs,name="view-open-accs"),
+    path('viewCloseRequests',views.view_close_accs,name="view-close-accs"),
     path('updateRequest', views.updateRequest, name='update-request'),
     path('verifyCheque', views.verifyCheque, name='verify-cheque'),
-    path('initVerifyCheque', views.initVerifyCheque, name='init-verify-cheque')
+    path('initVerifyCheque', views.initVerifyCheque, name='init-verify-cheque'),
+    path('updateInternalRequest', views.updateInternalRequest, name='update-internal-request'),
+    path('ApproveUpdate',views.approve_open_request,name='approve-open-request'),
+    path('ApproveClose',views.approve_close_request,name='approve-close-request')
 ]

@@ -70,6 +70,7 @@ def homepage(request):
 
 
 def activate(request, uidb64, token):
+    user_instance=User.objects.get(username=request.session['user'])
     try:
         uid = force_text(urlsafe_base64_decode(uidb64))
         user = User.objects.get(pk=uid)
