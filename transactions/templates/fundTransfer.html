@@ -1,4 +1,7 @@
-{% extends customer_homepage.html" %}
+{% if customer_homepage.html%}
+    {% extends customer_homepage.html" %}
+{%endif%}
+{% extends tier1_homepage.html" %}
 {% block content %}
 <div>
     <div>

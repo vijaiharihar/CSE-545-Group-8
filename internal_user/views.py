@@ -1,28 +1,13 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.contrib import messages
-
 from .forms import FundDepositForm, IssueChequeForm, CustomerForm
 from django.conf import settings
 from internal_user.approvals import _viewRequests, _updateRequest, _view_updates, _approve_update, _view_open_accs,_approve_open_request,_view_close_accs,_approve_close_request,_viewInternalRequests,_updateInternalRequest
 from internal_user.utils import render_to_pdf,verify_file
+from home import models
+from django.contrib.auth.models import User
 from home.models import Account, Cheque
-
-customers = [
-    {
-        'customerName': 'James Karen',
-        'customerId': 1,
-        'accountId': 1,
-        'accountType': 'Savings'
-    },
-    {
-        'customerName': 'Jane Doe',
-        'customerId': 2,
-        'accountId': 2,
-        'accountType': 'Checking'
-    }
-]
-
 
 def initFundDeposit(request):
     return render(request, 'init_fund_deposit.html')
@@ -65,7 +50,7 @@ def issueCheque(request):
             if account_object.account_balance > chequeAmount:
                 ## backend code goes here
                 cheque = Cheque(recipient=form.cleaned_data.get('recipientName'), amount=form.cleaned_data.get('chequeAmount'))
-                messages.success(request, f'Cheque Issued successfully {chequeAmount}')
+                messages.success(request, f'Cheque Issued successfully {cheque.id}')
                 cheque_id = cheque.id
                 data = {
                     'pay_to':form.cleaned_data.get('recipientName'),
@@ -82,6 +67,9 @@ def issueCheque(request):
                     return response
             else:
                 return render(request, 'failed.html', {'failure': '500 Error: Account not found.'}, status=500)
+        else:
+            messages.error(request, f'Please enter valid data')
+            return redirect(settings.BASE_URL + '/internal_user/initIssueCheque')
 
 def verifyCheque(request):
     try:
@@ -101,6 +89,27 @@ def initVerifyCheque(request):
 
 
 def searchCustomer(request):
+    customers = []
+    user_instance = None
+    try:
+        user_instance = User.objects.get(username=request.POST['customerSearchString'])
+
+        if user_instance:
+            #profile = models.Profile.objects.get(user=user_instance)
+            accounts = models.Account.objects.filter(user=user_instance)
+
+            for account in accounts:
+                customer = {'customerName':user_instance.first_name + ' '+user_instance.last_name,
+                'customerId':user_instance.username,
+                'accountId':account.account_number,
+                'accountType':account.account_type}
+                customers.append(customer)
+        else:
+            customers = []
+
+    except:
+        customers = []
+
     context = {
         'customers' : customers,
         'customerSearchString' : request.POST['customerSearchString']
@@ -122,13 +131,23 @@ def initViewCustomer(request):
 
 def viewCustomer(request):
     if request.method == 'POST':
+        user_instance = User.objects.get(username=request.POST['customerId'])
+        try:
+            accounts = models.Account.objects.filter(user=user_instance)
+        except:
+            account = []
+        print(request.POST['customerId'])
         form = CustomerForm(initial={'customerName': request.POST['customerName'],
                                     'customerId': request.POST['customerId'],
                                     'accountId': request.POST['accountId'],
-                                    'accountType': request.POST['accountType']
+                                    'accountType': request.POST['accountType'],
+                                    'customerEmail':user_instance.email,
+
+
         })
         ##Get all customer realted data from database and populate form
-        return render(request, 'view_customer.html', {'form':form})
+
+        return render(request, 'view_customer.html', {'form':form,'accounts':accounts})
 
 def createCustomer(request):
     return redirect(settings.BASE_URL+'/create_account')
