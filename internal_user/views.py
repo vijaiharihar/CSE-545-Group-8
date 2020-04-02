@@ -6,22 +6,8 @@ from .forms import FundDepositForm, IssueChequeForm, CustomerForm
 from django.conf import settings
 from internal_user.approvals import _viewRequests, _updateRequest
 from internal_user.utils import render_to_pdf,verify_file
-
-customers = [
-    {
-        'customerName': 'James Karen',
-        'customerId': 1,
-        'accountId': 1,
-        'accountType': 'Savings'
-    },
-    {
-        'customerName': 'Jane Doe',
-        'customerId': 2,
-        'accountId': 2,
-        'accountType': 'Checking'
-    }
-]
-
+from home import models
+from django.contrib.auth.models import User
 
 def initFundDeposit(request):
     return render(request, 'init_fund_deposit.html')
@@ -75,6 +61,9 @@ def issueCheque(request):
                 content = "attachment; filename=%s" % (filename)
                 response['Content-Disposition'] = content
                 return response
+        else:
+            messages.error(request, f'Please enter valid data')
+            return redirect(settings.BASE_URL + '/internal_user/initIssueCheque')
 
 def verifyCheque(request):
     try:
@@ -94,6 +83,27 @@ def initVerifyCheque(request):
 
 
 def searchCustomer(request):
+    customers = []
+    user_instance = None
+    try:
+        user_instance = User.objects.get(username=request.POST['customerSearchString'])
+
+        if user_instance:
+            #profile = models.Profile.objects.get(user=user_instance)
+            accounts = models.Account.objects.filter(user=user_instance)
+
+            for account in accounts:
+                customer = {'customerName':user_instance.first_name + ' '+user_instance.last_name,
+                'customerId':user_instance.username,
+                'accountId':account.account_number,
+                'accountType':account.account_type}
+                customers.append(customer)
+        else:
+            customers = []
+
+    except:
+        customers = []
+
     context = {
         'customers' : customers,
         'customerSearchString' : request.POST['customerSearchString']
@@ -115,13 +125,23 @@ def initViewCustomer(request):
 
 def viewCustomer(request):
     if request.method == 'POST':
+        user_instance = User.objects.get(username=request.POST['customerId'])
+        try:
+            accounts = models.Account.objects.filter(user=user_instance)
+        except:
+            account = []
+        print(request.POST['customerId'])
         form = CustomerForm(initial={'customerName': request.POST['customerName'],
                                     'customerId': request.POST['customerId'],
                                     'accountId': request.POST['accountId'],
-                                    'accountType': request.POST['accountType']
+                                    'accountType': request.POST['accountType'],
+                                    'customerEmail':user_instance.email,
+
+
         })
         ##Get all customer realted data from database and populate form
-        return render(request, 'view_customer.html', {'form':form})
+
+        return render(request, 'view_customer.html', {'form':form,'accounts':accounts})
 
 def createCustomer(request):
     return redirect(settings.BASE_URL+'/create_account')

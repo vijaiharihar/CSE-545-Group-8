@@ -3,7 +3,7 @@ from django.core.validators import MinValueValidator
 
 class FundDepositForm(forms.Form):
     customerName = forms.CharField(label='Name')
-    customerId = forms.IntegerField(label='Customer Id', validators=[MinValueValidator(1)])
+    customerId = forms.CharField(label='Customer Id', validators=[MinValueValidator(1)])
     accountId = forms.IntegerField(label='Account Id', validators=[MinValueValidator(1)])
     accountType = forms.CharField(label='Account type')
     depositAmount = forms.FloatField(label='Deposit amount', validators=[MinValueValidator(0.01)])
@@ -17,8 +17,7 @@ class IssueChequeForm(forms.Form):
 
 class CustomerForm(forms.Form):
     customerName = forms.CharField(label='Name')
-    customerId = forms.IntegerField(label='Customer Id', validators=[MinValueValidator(1)])
+    customerId = forms.CharField(label='Customer Id')
     accountId = forms.IntegerField(label='Account Id', validators=[MinValueValidator(1)])
     accountType = forms.CharField(label='Account type')
     customerEmail = forms.EmailField(label='Email')
-    customerPhoneNum = forms.IntegerField(label='Phone number', validators=[MinValueValidator(1)])

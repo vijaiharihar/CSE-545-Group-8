@@ -25,7 +25,7 @@
             {% csrf_token %}
             {{form|crispy}}
 
-            <input type="submit" id="issue_cheque" value="Issue Cheque" disabled >
+            <input type="submit" id="issue_cheque" value="Issue Cheque" disabled onclick="issue()">
         </form>
     </div>
 </div>
