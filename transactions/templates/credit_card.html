@@ -1,0 +1,86 @@
+{% extends "customer_homepage.html" %} {% block content %}
+    <div>
+        <div>
+            <h2>Withdraw</h2><br><br>
+        </div>
+        <div id="withdrawForm" class="form-group">
+            <form action='/user_home/withdraw/' method="post" onsubmit="return validateWithdraw()">
+                {% csrf_token %}
+                <label for="accountId">From Account:</label>
+                <select id="accountId" class="form-control" name="accountId">
+                    {% for value in accounts %}
+                        <option value="{{ value.number }}">{{ value.type }} {{ value.number }}</option>
+                    {% endfor %}
+                </select>
+                <br><br>
+                <label for="amount">Amount:</label>
+                <input type="number" id="amount" step="0.01" class="form-control" name="amount" min="0.01"><br><br>
+                <input type="submit" value="Submit" class="btn btn-primary float-right app-submit">
+            </form>
+        </div>
+        <div id="depositForm" class="form-group">
+            <form action='/user_home/deposit/' method="post" onsubmit="return validateDeposit()">
+                {% csrf_token %}
+                <label for="accountId">To Account:</label>
+                <select id="accountId" class="form-control" name="accountId">
+                    {% for value in accounts %}
+                        <option value="{{ value.number }}">{{ value.type }} {{ value.number }}</option>
+                    {% endfor %}
+                </select>
+                <br><br>
+                <label for="amount">Amount:</label>
+                <input type="number" id="amount" step="0.01" class="form-control" name="amount" min="0.01"><br><br>
+                <input type="submit" value="Submit" class="btn btn-primary float-right app-submit">
+            </form>
+        </div>
+    </div>
+    <script>
+        function validateWithdraw() {
+            let accountNumber = document.getElementById("accountId").value;
+            let amount = document.getElementById("amount").value;
+            let accounts = "{{accounts}}";
+
+            // Checks on account number
+            if (accountNumber === null || accountNumber === undefined || accountNumber === "") {
+                alert("Please select an account.");
+                return false;
+            }
+
+            if (!accounts.filter("number").includes(accountNumber)) {
+                alert("Please select an existing account.");
+                return false;
+            }
+
+            if (amount < 0.01) {
+                alert("Please enter an amount value of at least 0.01.");
+                return false;
+            }
+
+            return true;
+        }
+
+        function validateDeposit() {
+            let accountNumber = document.getElementById("accountId").value;
+            let amount = document.getElementById("amount").value;
+            let accounts = "{{accounts}}";
+
+            // Checks on account number
+            if (accountNumber === null || accountNumber === undefined || accountNumber === "") {
+                alert("Please select an account.");
+                return false;
+            }
+
+            if (!accounts.filter("number").includes(accountNumber)) {
+                alert("Please select an existing account.");
+                return false;
+            }
+
+            if (amount < 0.01) {
+                alert("Please enter an amount value of at least 0.01.");
+                return false;
+            }
+
+            return true;
+        }
+    </script>
+{% endblock content %}

@@ -4,7 +4,7 @@
         <h2>Withdraw</h2><br><br>
     </div>
     <div id="withdrawForm" class="form-group">
-        <form action='/transaction/withdraw' method="post" onsubmit="return validateWithdraw()">
+        <form action='/user_home/withdraw/' method="post" onsubmit="return validateWithdraw()">
             {% csrf_token %}
             <label for="accountId">From Account:</label>
             <select id="accountId" class="form-control" name="accountId">

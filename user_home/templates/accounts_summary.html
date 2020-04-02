@@ -1,0 +1,10 @@
+{% extends "customer_homepage.html" %}
+{% block content %}
+    {% for account in accounts %}
+        <div style="border: black solid 2px; padding: 10px;">
+            Account Type: {{ account.account_type }}<br>
+            Account Number: {{ account.account_number }}<br>
+            Balance: ${{ account.account_balance }}<br>
+        </div>
+    {% endfor %}
+{% endblock %}

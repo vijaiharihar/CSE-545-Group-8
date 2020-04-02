@@ -22,6 +22,7 @@ from home.models import Account
 from transactions.forms import FundDepositWithdrawForm
 import mimetypes
 
+
 def fundTransfer(request):
     if request.method == 'POST':
         form = FundTransferForm(request.POST)
@@ -34,7 +35,7 @@ def fundTransfer(request):
                 today = date.today()
                 url = 'http://localhost:8080/api/query'
                 payload = '{"from": "' + str(from_account) + '", "date":"' + today.strftime("%m/%d/%Y") + '"}'
-                headers = {'content-type': 'application/json',}
+                headers = {'content-type': 'application/json', }
                 r = requests.get(url, data=payload, headers=headers)
                 json_data = json.loads(r.json()['response'])
                 daily_transaction = 0
@@ -44,8 +45,10 @@ def fundTransfer(request):
                 print(daily_transaction)
                 if daily_transaction <= 1000 and transferAmount <= 1000:
                     url = 'http://localhost:8080/api/addTransaction'
-                    payload = '{"transactionId": "'+ str(transaction_id.transaction_id) +'","from": "' + str(from_account) + '", "to": "' + str(to_account) + '", "amount":"' + str(transferAmount) + '", "transactionType":"Debit"}'
-                    headers = {'content-type': 'application/json',}
+                    payload = '{"transactionId": "' + str(transaction_id.transaction_id) + '","from": "' + str(
+                        from_account) + '", "to": "' + str(to_account) + '", "amount":"' + str(
+                        transferAmount) + '", "transactionType":"Debit"}'
+                    headers = {'content-type': 'application/json', }
                     r = requests.post(url, data=payload, headers=headers)
                     account = Account.objects.get(account_number=from_account)
                     account.account_balance -= float(transferAmount)
@@ -66,15 +69,16 @@ def fundTransfer(request):
                     messages.success(request, f'Fund transfer in review {transferAmount}')
                 transaction_id.transaction_id += 1
                 transaction_id.save()
-                return redirect(settings.BASE_URL+'/user_home')
+                return redirect(settings.BASE_URL + '/user_home')
             else:
                 messages.error(request, f'Form is not valid')
-                return redirect(settings.BASE_URL+'/user_home')
+                return redirect(settings.BASE_URL + '/user_home')
         else:
             return render(request, 'failed.html', {'failure': '403 Error: Account balance too small.'},
-                                  status=403)
+                          status=403)
     else:
         return render(request, 'fundTransfer.html')
+
 
 def fund_deposit(request):
     """Deposits the given amount of money into the specified bank account"""
@@ -87,18 +91,36 @@ def fund_deposit(request):
 
             # Check that account was found
             if account_object is not None:
-                transaction_id = Transaction.objects.get(field_type='Counter')
-                pending = Pending_Transactions()
-                pending.transaction_id = transaction_id.transaction_id
-                pending.from_account = 'self'
-                pending.to_account = account
-                pending.transaction_value = amount
-                pending.transaction_date = datetime.now()
-                pending.transaction_type = 'Deposit'
-                pending.save()
-                transaction_id.transaction_id += 1
-                transaction_id.save()
-                messages.success(request, f'Transaction transfer in review {amount}')
+                if account_object.account_type == 'credit_card':
+                    if account_object.account_balance + amount > 2000:
+                        messages.success(request, f'Cannot pay over limit of $2000.')
+                        return render(request, 'failed.html', {'failure': 'Cannot pay over limit of $2000.'}, status=500)
+                    else:
+                        transaction_id = Transaction.objects.get(field_type='Counter')
+                        pending = Pending_Transactions()
+                        pending.transaction_id = transaction_id.transaction_id
+                        pending.from_account = 'self'
+                        pending.to_account = account
+                        pending.transaction_value = amount
+                        pending.transaction_date = datetime.now()
+                        pending.transaction_type = 'Deposit'
+                        pending.save()
+                        transaction_id.transaction_id += 1
+                        transaction_id.save()
+                        messages.success(request, f'Transaction transfer in review {amount}')
+                else:
+                    transaction_id = Transaction.objects.get(field_type='Counter')
+                    pending = Pending_Transactions()
+                    pending.transaction_id = transaction_id.transaction_id
+                    pending.from_account = 'self'
+                    pending.to_account = account
+                    pending.transaction_value = amount
+                    pending.transaction_date = datetime.now()
+                    pending.transaction_type = 'Deposit'
+                    pending.save()
+                    transaction_id.transaction_id += 1
+                    transaction_id.save()
+                    messages.success(request, f'Transaction transfer in review {amount}')
                 return render(request, 'success.html')
             else:
                 return render(request, 'failed.html', {'failure': '500 Error: Account not found.'}, status=500)
@@ -160,12 +182,14 @@ def fund_withdraw(request):
 def initfundTransfer(request):
     return render(request, 'fundTransfer.html')
 
+
 def pendingTrans(request):
     pending = Pending_Transactions.objects.all()
     context = {
-        'pending' : pending
+        'pending': pending
     }
     return render(request, 'pendingTransactions.html', context)
+
 
 def updateTransaction(request):
     if request.method == 'POST':
@@ -192,11 +216,14 @@ def updateTransaction(request):
                 account.account_balance += float(pending.transaction_value)
                 account.save()
             url = 'http://localhost:8080/api/addTransaction'
-            payload = '{"transactionId": "'+ str(pending.transaction_id) +'","from": "' + str(pending.from_account) + '", "to": "' + str(pending.to_account) + '", "amount":"' + str(pending.transaction_value) + '", "transactionType":"Deposit"}'
-            headers = {'content-type': 'application/json',}
+            payload = '{"transactionId": "' + str(pending.transaction_id) + '","from": "' + str(
+                pending.from_account) + '", "to": "' + str(pending.to_account) + '", "amount":"' + str(
+                pending.transaction_value) + '", "transactionType":"Deposit"}'
+            headers = {'content-type': 'application/json', }
             r = requests.post(url, data=payload, headers=headers)
             pending.delete()
-    return HttpResponse({'value':'success'}, status=200)
+    return HttpResponse({'value': 'success'}, status=200)
+
 
 def generateStatements(request):
     if request.method == 'POST':
@@ -215,7 +242,7 @@ def generateStatements(request):
             records = [['Recipient', 'Amount', 'Date', 'Time']]
             url = 'http://localhost:8080/api/query'
             payload = '{"from": "' + str(account_object.account_number) + '"}'
-            headers = {'content-type': 'application/json',}
+            headers = {'content-type': 'application/json', }
             r = requests.get(url, data=payload, headers=headers)
             json_data = json.loads(r.json()['response'])
             row_data = []
@@ -227,9 +254,9 @@ def generateStatements(request):
                 records.append(row_data)
             for row in records:
                 for item in row:
-                    pdf.cell(col_width, row_height*spacing,
-                            txt=item, border=1)
-                pdf.ln(row_height*spacing)
+                    pdf.cell(col_width, row_height * spacing,
+                             txt=item, border=1)
+                pdf.ln(row_height * spacing)
             filename = '{}-{}.pdf'.format(account_object.account_number, datetime.now())
             pdf.output('./transactions/statements/' + filename)
             # fill these variables with real values
@@ -246,8 +273,9 @@ def generateStatements(request):
             accounts.append({"number": account.account_number, "type": account.account_type})
         return render(request, 'statements.html', {"accounts": accounts})
 
-#generate key function
-#generate private key and public key
+
+# generate key function
+# generate private key and public key
 def generate_key():
     # Generate the public/private key pair.
     private_key = rsa.generate_private_key(
@@ -277,16 +305,15 @@ def generate_key():
     return
 
 
-
-#sign file function
-#use private key to sign statement file
-#generate sign file, it use to verificate
-#The sign file and statement file is corresponding
-#private_key---string of private_key file
-#file_name ---- string of file should sign
+# sign file function
+# use private key to sign statement file
+# generate sign file, it use to verificate
+# The sign file and statement file is corresponding
+# private_key---string of private_key file
+# file_name ---- string of file should sign
 def sign_file(private_key, file_name):
     # Load the private key.
-    #private_key=private.key
+    # private_key=private.key
     with open(private_key, 'rb') as key_file:
         private_key = serialization.load_pem_private_key(
             key_file.read(),
@@ -299,7 +326,7 @@ def sign_file(private_key, file_name):
         payload = f.read()
 
     # Sign the payload file.
-    #genertae sign file, it should send to verification
+    # genertae sign file, it should send to verification
     signature = base64.b64encode(
         private_key.sign(
             payload,
@@ -314,22 +341,23 @@ def sign_file(private_key, file_name):
         f.write(signature)
     return
 
-#verificate_file function
-#need statement file and sign file,  two file is corresponding
-#public_key---string of private_key file
-#file_name ---- string of file should verificate
-#sign_file ----- string of sign file which generate by sign file function, use to verificate
-def verificate_file(public_key,file_name,sign_file):
+
+# verificate_file function
+# need statement file and sign file,  two file is corresponding
+# public_key---string of private_key file
+# file_name ---- string of file should verificate
+# sign_file ----- string of sign file which generate by sign file function, use to verificate
+def verificate_file(public_key, file_name, sign_file):
     # Load the public key.
-    #public_key=public.pem
+    # public_key=public.pem
     with open(public_key, 'rb') as f:
         public_key = load_pem_public_key(f.read(), default_backend())
 
     # Load the statement contents and the signature.
-    #file_name='statement.txt'
+    # file_name='statement.txt'
     with open(file_name, 'rb') as f:
         payload_contents = f.read()
-    #sign_file='signature.sig'
+    # sign_file='signature.sig'
     with open(sign_file, 'rb') as f:
         signature = base64.b64decode(f.read())
 
@@ -348,7 +376,7 @@ def verificate_file(public_key,file_name,sign_file):
         # to do more
         ##############
     except cryptography.exceptions.InvalidSignature as e:
-        #this file is fail
-        #ERROR
+        # this file is fail
+        # ERROR
         print('ERROR: Payload and/or signature files failed verification!')
     return

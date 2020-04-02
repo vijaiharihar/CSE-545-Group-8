@@ -1,17 +1,29 @@
 {% extends "base.html" %}
 
 {% block menu %}
-<li class="list-group-item list-group-item-light menu" id="makeAppointment">
-  <a href="http://{{ request.get_host }}/user_home/appointment"> Make Appointment </a>
-</li>
-<li class="list-group-item list-group-item-light menu" id="updateProfile">
-  <a href="http://{{ request.get_host }}/user_home/profile_update/"> Update Profile</a>
-</li>
-<li class="list-group-item list-group-item-light menu" id="addNewAccount">
-  <a href="http://{{ request.get_host }}/user_home/new_account/"> Add New Account </a>
-</li>
-<li class="list-group-item list-group-item-light menu" id="deleteAccount">
-  <a href="http://{{ request.get_host }}/user_home/delete_account/"> Delete Account </a>
-</li>
+    <li class="list-group-item list-group-item-light menu" id="makeAppointment">
+        <a href="http://{{ request.get_host }}/user_home/appointment"> Make Appointment </a>
+    </li>
+    <li class="list-group-item list-group-item-light menu" id="updateProfile">
+        <a href="http://{{ request.get_host }}/user_home/profile_update/"> Update Profile</a>
+    </li>
+    <li class="list-group-item list-group-item-light menu" id="addNewAccount">
+        <a href="http://{{ request.get_host }}/user_home/new_account/"> Add New Account </a>
+    </li>
+    <li class="list-group-item list-group-item-light menu" id="deleteAccount">
+        <a href="http://{{ request.get_host }}/user_home/delete_account/"> Delete Account </a>
+    </li>
+    <li class="list-group-item list-group-item-light menu" id="Deposit">
+        <a href="http://{{ request.get_host }}/user_home/deposit/">Deposit</a>
+    </li>
+    <li class="list-group-item list-group-item-light menu" id="Withdraw">
+        <a href="http://{{ request.get_host }}/user_home/withdraw/">Withdraw</a>
+    </li>
+    <li class="list-group-item list-group-item-light menu" id="GetStatement">
+        <a href="http://{{ request.get_host }}/user_home/getStatement/">Download Statement</a>
+    </li>
+    <li class="list-group-item list-group-item-light menu" id="fundTransfer">
+        <a href="http://{{ request.get_host }}/user_home/fundTransfer/">Transfer</a>
+    </li>
 
 {% endblock menu %}
