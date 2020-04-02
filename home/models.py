@@ -107,3 +107,7 @@ class Tiers(models.Model):
 
     def __str__(self):
         return self.tier_status
+
+class Cheques(models.Model):
+    recipient = models.CharField(max_length=20)
+    amount = models.models.FloatField(default=0)
