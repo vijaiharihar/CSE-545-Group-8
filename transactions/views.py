@@ -233,6 +233,7 @@ def generateStatements(request):
             filename = '{}-{}.pdf'.format(account_object.account_number, datetime.now())
             pdf.output('./transactions/statements/' + filename)
             # fill these variables with real values
+            sign_file('private.key', filename)
             with open('./transactions/statements/' + filename, 'rb') as pdf:
                 response = HttpResponse(pdf, content_type='application/pdf')
                 response['Content-Disposition'] = "attachment; filename=%s" % filename
@@ -310,7 +311,7 @@ def sign_file(private_key, file_name):
             hashes.SHA256(),
         )
     )
-    with open('signature.sig', 'wb') as f:
+    with open(file_name, 'wb') as f:
         f.write(signature)
     return
 
