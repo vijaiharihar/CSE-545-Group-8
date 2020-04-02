@@ -1,19 +1,8 @@
-{% load crispy_forms_tags%}
-<!DOCTYPE html>
-<html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <meta http-equiv="X-UA-Compatible" content="ie=edge">
-        <title>
-            Create New Account
-        </title>
-    </head>
-    <body>
+{% extends "customer_homepage.html" %}
+{% block content %}
         <form method="POST" action='/user_home/new_account/'>
             {% csrf_token %}
             {{ acc_form.as_p }}
             <input type="submit" value="Add New Account">
         </form>
-    </body>
-</html>
+{% endblock content %}

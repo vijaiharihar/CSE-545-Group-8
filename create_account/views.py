@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login
-from .forms import ExtendedUserCreationForm, UserProfileForm, AccountForm
+from .forms import ExtendedUserCreationForm, UserProfileForm, AccountForm, Otp
 from django.http import HttpResponseRedirect
 from django.http import HttpResponse
 from home.models import Privilege
@@ -17,9 +17,16 @@ from .tokens import account_activation_token
 from django.contrib.auth.models import User
 from django.core.mail import EmailMessage
 from django.utils.encoding import force_text
-
+from twilio.rest import Client
+from django.conf import settings
+from random import randint
+import time
+import logging
+log = logging.getLogger(__name__)
 
 def homepage(request):
+    global mail_expiry
+    global otp_expiry
     if request.method == 'POST':
         form = ExtendedUserCreationForm(request.POST)
         profile_form = UserProfileForm(request.POST)
@@ -35,6 +42,9 @@ def homepage(request):
             profile.save()
             acc.save()
             current_site = get_current_site(request)
+            request.session['mobile_number']=profile.mobile_number
+            request.session['token']=randint(10000,99999)
+            request.session['user'] = user.username
             mail_subject = 'Activate your bank account.'
             message = render_to_string('acc_activate_email.html', {
                 'user': user,
@@ -46,6 +56,7 @@ def homepage(request):
             email = EmailMessage(
                         mail_subject, message, to=[to_email]
             )
+            mail_expiry=time.time()
             email.send()
             return HttpResponseRedirect('/login/')
     else:
@@ -62,11 +73,38 @@ def activate(request, uidb64, token):
         user = User.objects.get(pk=uid)
     except(TypeError, ValueError, OverflowError, User.DoesNotExist):
         user = None
+    if mail_expiry-time.time()>86400:
+        user.delete()
+        return HttpResponse('Activation link has expired!')
     if user is not None and account_activation_token.check_token(user, token):
-        user.is_active = True
-        user.save()
-        # return redirect('home')
-        return HttpResponseRedirect('/login/')
+        return HttpResponseRedirect('/create_account/phone_otp')
     else:
+        user.delete()
         return HttpResponse('Activation link is invalid!')
+
+def phone_otp(request):
+    otp_expiry=time.time()
+    user_instance=User.objects.get(username=request.session['user'])
+    if request.method == 'POST':
+        form = Otp(request.POST)
+        if form.is_valid():
+            if time.time()-otp_expiry>300:
+                user_instance.delete()
+                return HttpResponse("Registration Failed!! OTP expired")
+            if form.cleaned_data['otp'] == request.session['token']:
+                user_instance.is_active = True
+                user_instance.save()
+                return HttpResponseRedirect('/login')
+        user_instance.delete()
+        return HttpResponse("Registration Failed!! Wrong OTP")
+    else:
+        form = Otp()
+        to = request.session['mobile_number']
+        client = Client(settings.TWILIO_ACCOUNT_SID, settings.TWILIO_AUTH_TOKEN)
+        response = client.messages.create(body=request.session['token'], to=to, from_=settings.TWILIO_PHONE_NUMBER)
+        context={'form' : form}
+        return render(request,'phone_otp/phone_otp.html',context)
+        
+        
+
 # Create your views here.

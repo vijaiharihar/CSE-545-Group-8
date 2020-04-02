@@ -2,7 +2,6 @@
 
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -12,75 +11,47 @@
     <meta charset="UTF-8">
     <title>Secure Bank App</title>
 </head>
-
 <body>
     <header class="site-header">
-        <nav class="navbar navbar-expand-md navbar-dark bg-steel fixed-top">
-            <div class="container">
-                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarToggle" aria-controls="navbarToggle" aria-expanded="false" aria-label="Toggle navigation">
+      <nav class="navbar navbar-expand-md navbar-dark bg-steel fixed-top">
+        <div class="container">
+          <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarToggle" aria-controls="navbarToggle" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
           </button>
-                <div class="collapse navbar-collapse" id="navbarToggle">
-                    <div class="navbar-nav mr-auto">
-                        <a class="nav-item nav-link" href="/user_home">Home</a>
+          <div class="collapse navbar-collapse" id="navbarToggle">
+            <div class="navbar-nav mr-auto">
+              <a class="nav-item nav-link" href="/user_home/home">Home</a>
 
-                    </div>
-                    <!-- Navbar Right Side -->
-                    <div class="navbar-nav">
-                        <a class="nav-item nav-link" href="/user_home/logout/">Logout</a>
-                    </div>
-                </div>
             </div>
-        </nav>
+            <!-- Navbar Right Side -->
+            <div class="navbar-nav">
+              <a class="nav-item nav-link" href="/user_home/logout/">Logout</a>
+            </div>
+          </div>
+        </div>
+      </nav>
     </header>
     <main role="main" class="container">
-        <div class="row">
+      <div class="row">
 
-            <div class="col-md-4">
-                <div class="content-section">
-                    <ul class="list-group">
-
-                        <!--                  Tier-1 menu-->
-                        <li class="list-group-item list-group-item-light menu" id="fundTransfer">
-                            <a href="http://{{ request.get_host }}/internal_user/initFundDeposit">Initiate fund deposit</a> </li>
-                        <li class="list-group-item list-group-item-light menu" id="issueCheque">
-                            <a href="http://{{ request.get_host }}/internal_user/initIssueCheque">Issue cashier cheque</a> </li>
-                        <li class="list-group-item list-group-item-light menu" id="transferFund">
-                            <a href="http://{{ request.get_host }}/transaction/initfundTransfer">Transfer money</a> </li>
-
-                        <!--    Tier-1 and Tier-2 common menu-->
-                        <li class="list-group-item list-group-item-light menu" id="viewCustomerAccount">
-                            <a href="http://{{ request.get_host }}/internal_user/initViewCustomer">View customer account</a> </li>
-                        <li class="list-group-item list-group-item-light menu" id="pendingTransactions">
-                            <a href="http://{{ request.get_host }}/transaction/pendingTransactions">Pending Transactions</a> </li>
-
-                        <!--                  Tier-2 menu-->
-                        <li class="list-group-item list-group-item-light menu" id="createCust">
-                            <a href="http://{{ request.get_host }}/internal_user/createCustomer">Create customer account</a> </li>
-                        <li class="list-group-item list-group-item-light menu" id="modifyCust">
-                            <a href="http://{{ request.get_host }}/internal_user/initModifyCustomer">Modify customer account</a> </li>
-                        <li class="list-group-item list-group-item-light menu" id="deleteCust">
-                            <a href="http://{{ request.get_host }}/internal_user/deleteCustomer">Close customer account</a> </li>
-
-                        <!--                  Admin menu-->
-                        <li class="list-group-item list-group-item-light menu" id="createEmp">
-                            <a href="http://{{ request.get_host }}/admin_app/createEmployee">Create employee account</a> </li>
-                        <li class="list-group-item list-group-item-light menu" id="modifyEmp">
-                            <a href="http://{{ request.get_host }}/admin_app/modifyEmployee">Modify employee account</a> </li>
-                        <li class="list-group-item list-group-item-light menu" id="deleteEmp">
-                            <a href="http://{{ request.get_host }}/admin_app/deleteEmployee">Delete employee account</a> </li>
-
-                    </ul>
-                </div>
-            </div>
-            <div class="col-md-8">
-                {% if messages %} {% for message in messages%}
-                <div class="alert alert-{{message.tags}}">
-                    {{ message }}
-                </div>
-                {% endfor %} {% endif %} {% block content %}{% endblock %}
-            </div>
+        <div class="col-md-4">
+          <div class="content-section">
+              <ul class="list-group">
+                    {% block menu %}{% endblock %}
+               </ul>
+          </div>
         </div>
+          <div class="col-md-8">
+              {% if messages %}
+                {% for message in messages%}
+                    <div class="alert alert-{{message.tags}}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+              {% endif %}
+              {% block content %}{% endblock %}
+          </div>
+      </div>
     </main>
 
     <script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
@@ -89,5 +60,4 @@
 
     {% block javascript %}{% endblock %}
 </body>
-
 </html>

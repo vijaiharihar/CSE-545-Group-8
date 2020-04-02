@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags%}
+{% block content %}
+<div>
+    <div>
+        <h2>Verify cheque</h2><br><br>
+    </div>
+    <div>
+      <form method="post" enctype="multipart/form-data" action="./verifyCheque">
+        {% csrf_token %}
+        <input type="file" name="cheque">
+        <button type="submit">Upload</button>
+      </form>
+    </div>
+</div>
+{% endblock content %}

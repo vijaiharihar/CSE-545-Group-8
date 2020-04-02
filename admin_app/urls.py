@@ -25,5 +25,6 @@ urlpatterns = [
     path('createEmployee', views.createEmployee, name='create-employee'),
     path('modifyEmployee', views.modifyEmployee, name='modify-employee'),
     path('deleteEmployee', views.deleteEmployee, name='delete-employee'),
-    path('searchEmployee', views.searchEmployee, name='search-employee')
+    path('searchEmployee', views.searchEmployee, name='search-employee'),
+    path('systemLog', views.systemLog, name='system-log')
 ]

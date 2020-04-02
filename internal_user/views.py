@@ -5,10 +5,23 @@ from django.contrib import messages
 from .forms import FundDepositForm, IssueChequeForm, CustomerForm
 from django.conf import settings
 from internal_user.approvals import _viewRequests, _updateRequest
-from home import models
-from internal_user.utils import render_to_pdf,sign_file, verify_file
-from django.template.loader import get_template
-from django.views.generic import View
+from internal_user.utils import render_to_pdf,verify_file
+
+customers = [
+    {
+        'customerName': 'James Karen',
+        'customerId': 1,
+        'accountId': 1,
+        'accountType': 'Savings'
+    },
+    {
+        'customerName': 'Jane Doe',
+        'customerId': 2,
+        'accountId': 2,
+        'accountType': 'Checking'
+    }
+]
+
 
 def initFundDeposit(request):
     return render(request, 'init_fund_deposit.html')
@@ -42,21 +55,6 @@ def issueChequeTemplate(request):
     })
     return render(request, 'issueCheque.html', {'form':form})
 
-class GeneratePdf(View):
-    def get(self, request, *args, **kwargs):
-        cheque_id = 121
-        data = {
-            'pay_to': request.get('recipientName'),
-            'cheque_id': cheque_id,
-            'amount': request.get('chequeAmount'),
-        }
-        pdf = render_to_pdf('pdf_template.html', data)
-        response = HttpResponse(pdf, content_type='application/pdf')
-        filename = "Cheque_" + str(cheque_id) + ".pdf"
-        content = "inline;filename=" + filename
-        response['Content-Disposition'] = content
-        return response
-      
 def issueCheque(request):
     if request.method == 'POST':
         form = IssueChequeForm(request.POST)
@@ -64,18 +62,36 @@ def issueCheque(request):
             chequeAmount = form.cleaned_data.get('chequeAmount')
             ## backend code goes here
             messages.success(request, f'Cheque Issued successfully {chequeAmount}')
-            cheque_id = 121
+            cheque_id = 222
             data = {
                 'pay_to':form.cleaned_data.get('recipientName'),
                 'cheque_id': cheque_id,
                 'amount': form.cleaned_data.get('chequeAmount'),
             }
             pdf = render_to_pdf('pdf_template.html', data)
-            response = HttpResponse(pdf, content_type='application/pdf')
-            filename = "Cheque_" + str(cheque_id) +".pdf"
-            content = "inline;filename=" +filename
-            response['Content-Disposition'] =content
-            return response
+            if pdf:
+                response = HttpResponse(pdf, content_type='application/pdf')
+                filename = "Cheque_"+str(cheque_id)+".pdf"
+                content = "attachment; filename=%s" % (filename)
+                response['Content-Disposition'] = content
+                return response
+
+def verifyCheque(request):
+    try:
+        try:
+            chequeId = request.FILES['cheque'].name.split('_')[-1].replace(settings.SIGNATURE_FILES_FORMAT,'')
+        except:
+            return HttpResponse("Invalid file name format, file name should be of form Cheque_CHEQUEID.pdf")
+        status = verify_file('public.pem', request.FILES['cheque'], settings.SIGNATURE_FILES + str(chequeId) + settings.SIGNATURE_FILES_FORMAT)
+        status = not status
+        context = {'tampared': status}
+    except:
+        return HttpResponse("Error occured while verifying cheque")
+    return render(request, 'verify_cheque.html', context)
+
+def initVerifyCheque(request):
+    return render(request, 'init_verify.html')
+
 
 def searchCustomer(request):
     context = {
@@ -116,7 +132,6 @@ def initModifyCustomer(request):
 
 def modifyCustomerTemplate(request):
     if request.method == 'POST':
-        print('inside')
         # populate all customer related data here in the form
         form = CustomerForm(initial={'customerName': request.POST['customerName'],
                                     'customerId': request.POST['customerId'],

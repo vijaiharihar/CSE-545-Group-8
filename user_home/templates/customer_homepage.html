@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block menu %}
+<li class="list-group-item list-group-item-light menu" id="makeAppointment">
+  <a href="http://{{ request.get_host }}/user_home/appointment"> Make Appointment </a>
+</li>
+<li class="list-group-item list-group-item-light menu" id="updateProfile">
+  <a href="http://{{ request.get_host }}/user_home/profile_update/"> Update Profile</a>
+</li>
+<li class="list-group-item list-group-item-light menu" id="addNewAccount">
+  <a href="http://{{ request.get_host }}/user_home/new_account/"> Add New Account </a>
+</li>
+<li class="list-group-item list-group-item-light menu" id="deleteAccount">
+  <a href="http://{{ request.get_host }}/user_home/delete_account/"> Delete Account </a>
+</li>
+
+{% endblock menu %}

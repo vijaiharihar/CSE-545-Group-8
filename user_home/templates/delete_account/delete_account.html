@@ -1,19 +1,15 @@
-{% load crispy_forms_tags%}
-<!DOCTYPE html>
-<html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <meta http-equiv="X-UA-Compatible" content="ie=edge">
-        <title>
-            Delete Account
-        </title>
-    </head>
-    <body>
-        <form method="POST" action='/user_home/delete_account/'>
-            {% csrf_token %}
-            {{ acc_form.as_p }}
-            <input type="submit" value="Delete Account">
-        </form>
-    </body>
-</html>
+{% extends "customer_homepage.html" %}
+{% block content %}
+
+<form action='/user_home/delete_account/' method="POST">
+    {% csrf_token %}
+    <label for="account_number">Account:</label>
+    <select id="account_number" class="form-control" name="account_number">
+      {% for value in accounts %}
+          <option value="{{ value.number }}">{{ value.type }} {{ value.number }}</option>
+      {% endfor %}
+  </select>
+    <input type="submit" value="Submit" class="btn btn-primary float-right app-submit">
+</form>
+{% endblock content %}
+

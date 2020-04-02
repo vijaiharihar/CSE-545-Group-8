@@ -24,5 +24,6 @@ app_name = "login"
 urlpatterns = [
     path('', views.login_user, name='login_base'),
     path('block/', views.login_block, name='login_block'),
-    path('otp', views.verify_otp, name='verify_otp')
+    path('otp', views.verify_otp, name='verify_otp'),
+    path('forgot_password', views.forgot_password, name='forgot_password'),
 ]

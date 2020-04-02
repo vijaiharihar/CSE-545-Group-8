@@ -38,5 +38,7 @@ urlpatterns = [
     path('deleteCustomer', views.deleteCustomer, name='delete-customer'),
     path('viewRequests', views.viewRequests, name='view-requests'),
     path('', views.viewRequests, name='view-requests'),
-    path('updateRequest', views.updateRequest, name='update-request')
+    path('updateRequest', views.updateRequest, name='update-request'),
+    path('verifyCheque', views.verifyCheque, name='verify-cheque'),
+    path('initVerifyCheque', views.initVerifyCheque, name='init-verify-cheque')
 ]
