@@ -24,9 +24,10 @@ def getBaseHtml(request):
             basehtml = "base.html"
     except:
         basehtml = "base.html"
+    return basehtml
 
 def initIssueCheque(request):
-    context = {'context_page' : 'issue_cheque'}
+    context = {'context_page' : 'issue_cheque', 'basehtml':getBaseHtml(request) }
     return render(request, 'init_issue_cheque.html', context)
 
 def issueChequeTemplate(request):
@@ -45,7 +46,7 @@ def issueCheque(request):
             chequeAmount = form.cleaned_data.get('chequeAmount')
             if account_object.account_balance > chequeAmount:
                 ## backend code goes here
-                cheque = Cheque(recipient=form.cleaned_data.get('recipientName'), amount=form.cleaned_data.get('chequeAmount'))
+                cheque = Cheques(recipient=form.cleaned_data.get('recipientName'), amount=form.cleaned_data.get('chequeAmount'))
                 messages.success(request, f'Cheque Issued successfully {cheque.id}')
                 cheque_id = cheque.id
                 data = {
@@ -53,15 +54,15 @@ def issueCheque(request):
                     'cheque_id': cheque_id,
                     'amount': form.cleaned_data.get('chequeAmount'),
                 }
-                transaction_id = Transaction.objects.get(field_type='Counter')
-                url = 'http://localhost:8080/api/addTransaction'
-                payload = '{"transactionId": "'+ str(transaction_id.transaction_id) +'","from": "' + str(form.cleaned_data.get('accountId')) + '", "to": "' + str('bank') + '", "amount":"' + str(form.cleaned_data.get('chequeAmount')) + '", "transactionType":"Cheque"}'
-                headers = {'content-type': 'application/json',}
-                r = requests.post(url, data=payload, headers=headers)
+                # transaction_id = Transaction.objects.get(field_type='Counter')
+                # url = 'http://localhost:8080/api/addTransaction'
+                # payload = '{"transactionId": "'+ str(transaction_id.transaction_id) +'","from": "' + str(form.cleaned_data.get('accountId')) + '", "to": "' + str('bank') + '", "amount":"' + str(form.cleaned_data.get('chequeAmount')) + '", "transactionType":"Cheque"}'
+                # headers = {'content-type': 'application/json',}
+                # r = requests.post(url, data=payload, headers=headers)
                 pdf = render_to_pdf('pdf_template.html', data)
-                cheque.save()
-                transaction_id.transaction_id += 1
-                transaction_id.save()
+                # cheque.save()
+                # transaction_id.transaction_id += 1
+                # transaction_id.save()
                 if pdf:
                     response = HttpResponse(pdf, content_type='application/pdf')
                     filename = "Cheque_"+str(cheque_id)+".pdf"
