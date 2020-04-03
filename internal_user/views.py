@@ -54,15 +54,15 @@ def issueCheque(request):
                     'cheque_id': cheque_id,
                     'amount': form.cleaned_data.get('chequeAmount'),
                 }
-                # transaction_id = Transaction.objects.get(field_type='Counter')
-                # url = 'http://localhost:8080/api/addTransaction'
-                # payload = '{"transactionId": "'+ str(transaction_id.transaction_id) +'","from": "' + str(form.cleaned_data.get('accountId')) + '", "to": "' + str('bank') + '", "amount":"' + str(form.cleaned_data.get('chequeAmount')) + '", "transactionType":"Cheque"}'
-                # headers = {'content-type': 'application/json',}
-                # r = requests.post(url, data=payload, headers=headers)
+                transaction_id = Transaction.objects.get(field_type='Counter')
+                url = 'http://localhost:8080/api/addTransaction'
+                payload = '{"transactionId": "'+ str(transaction_id.transaction_id) +'","from": "' + str(form.cleaned_data.get('accountId')) + '", "to": "' + str('bank') + '", "amount":"' + str(form.cleaned_data.get('chequeAmount')) + '", "transactionType":"Cheque"}'
+                headers = {'content-type': 'application/json',}
+                r = requests.post(url, data=payload, headers=headers)
                 pdf = render_to_pdf('pdf_template.html', data)
-                # cheque.save()
-                # transaction_id.transaction_id += 1
-                # transaction_id.save()
+                cheque.save()
+                transaction_id.transaction_id += 1
+                transaction_id.save()
                 if pdf:
                     response = HttpResponse(pdf, content_type='application/pdf')
                     filename = "Cheque_"+str(cheque_id)+".pdf"
