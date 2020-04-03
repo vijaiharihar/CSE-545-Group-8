@@ -6,10 +6,34 @@
         <h2>View customer</h2><br><br>
     </div>
     <div class="form-group">
-        <form class="read">
+        <form class="read"  disabled="disabled">
             {% csrf_token %}
             {{form|crispy}}
         </form>
+        <div>
+            {% if accounts%}
+            <table class="table table-hover">
+                <thead class="thead-dark">
+                   <tr>
+                      <th>Account ID</th>
+                      <th>Account Type</th>
+                       <th>Balance</th>
+                       <th>Creation date</th>
+                       <th>Active</th>
+                  </tr>
+                </thead>
+              {% for account in accounts %}
+                    <tr>
+                        <td>{{account.account_number}}</td>
+                        <td>{{account.account_type}}</td>
+                        <td>{{account.account_balance}}</td>
+                        <td>{{account.creation_date}}</td>
+                        <td>{{account.flag}}</td>
+                    </tr>
+                {% endfor %}
+            </table>
+        {% endif %}
+        </div>
     </div>
 </div>
 {% endblock content %}

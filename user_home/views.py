@@ -22,6 +22,7 @@ from transactions import views as v
 
 # Create your views here.
 def user_home(request):
+    print(type(request.user))
     profile_instance = models.Profile.objects.get(user=request.user)
     if request.user.is_authenticated and request.user.is_active and profile_instance.flag == 1:
         if profile_instance.privilege_id.user_type == settings.SB_USER_TYPE_CUSTOMER:

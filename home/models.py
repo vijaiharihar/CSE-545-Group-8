@@ -111,4 +111,4 @@ class Tiers(models.Model):
 
 class Cheques(models.Model):
     recipient = models.CharField(max_length=20)
-    amount = models.models.FloatField(default=0)
+    amount = models.FloatField(default=0)

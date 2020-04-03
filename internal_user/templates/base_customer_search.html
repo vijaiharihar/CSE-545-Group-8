@@ -10,33 +10,38 @@
     </div>
 
     <div>
-        <table class="table table-hover">
-            <thead class="thead-dark">
-               <tr>
-                  <th>Customer Name</th>
-                  <th>Customer ID</th>
-                  <th>Account ID</th>
-                  <th>Account Type</th>
-              </tr>
-            </thead>
-          {% for customer in customers %}
-                <tr>
-                    <td name="customerName">{{customer.customerName}}</td>
-                    <td name="customerId">{{customer.customerId}}</td>
-                    <td name="accountId">${{customer.accountId}}</td>
-                    <td name="accountType">{{customer.accountType}}</td>
-                    <td>
-                        <form method="POST" action="{{action_path}}">
-                            {% csrf_token %}
-                            <input type="hidden" name="customerName" value="{{customer.customerName}}">
-                            <input type="hidden" name="customerId" value="{{customer.customerId}}">
-                            <input type="hidden" name="accountId" value="{{customer.accountId}}">
-                            <input type="hidden" name="accountType" value="{{customer.accountType}}">
-                            <input type="submit" value="{{button_value}}" />
-                        </form>
-                    </td>
-                </tr>
-            {% endfor %}
-        </table>
+        {% if not customers and customerSearchString%}
+        <h4> Customer not found. Try again with different search word</h4>
+        {% endif %}
+        {% if customers%}
+            <table class="table table-hover">
+                <thead class="thead-dark">
+                   <tr>
+                      <th>Customer Name</th>
+                      <th>Customer ID</th>
+                      <th>Account ID</th>
+                      <th>Account Type</th>
+                  </tr>
+                </thead>
+              {% for customer in customers %}
+                    <tr>
+                        <td name="customerName">{{customer.customerName}}</td>
+                        <td name="customerId">{{customer.customerId}}</td>
+                        <td name="accountId">{{customer.accountId}}</td>
+                        <td name="accountType">{{customer.accountType}}</td>
+                        <td>
+                            <form method="POST" action="{{action_path}}">
+                                {% csrf_token %}
+                                <input type="hidden" name="customerName" value="{{customer.customerName}}">
+                                <input type="hidden" name="customerId" value="{{customer.customerId}}">
+                                <input type="hidden" name="accountId" value="{{customer.accountId}}">
+                                <input type="hidden" name="accountType" value="{{customer.accountType}}">
+                                <input type="submit" value="{{button_value}}" />
+                            </form>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </table>
+        {% endif %}
     </div>
 </div>
