@@ -1,21 +1,17 @@
 {% extends "base.html" %}
 
 {% block menu %}
-<li class="list-group-item list-group-item-light menu" id="fundTransfer">
-  <a href="http://{{ request.get_host }}/transactions/deposit">Initiate fund deposit</a> </li>
+
 <li class="list-group-item list-group-item-light menu" id="issueCheque">
   <a href="http://{{ request.get_host }}/internal_user/initIssueCheque">Issue cashier cheque</a> </li>
 <li class="list-group-item list-group-item-light menu" id="verifyCheque">
   <a href="http://{{ request.get_host }}/internal_user/initVerifyCheque">Verify cashier cheque</a> </li>
 <li class="list-group-item list-group-item-light menu" id="transferFund">
-  <a href="http://{{ request.get_host }}/transactions/fundTransfer">Transfer money</a> </li>
-
+  <a href="http://{{ request.get_host }}/user_home/fundTransfer">Transfer money</a> </li>
 <li class="list-group-item list-group-item-light menu" id="viewCustomerAccount">
   <a href="http://{{ request.get_host }}/internal_user/initViewCustomer">View customer account</a> </li>
-
 <li class="list-group-item list-group-item-light menu" id="pendingTransactions">
   <a href="http://{{ request.get_host }}/transaction/pendingTransactions">Pending Transactions</a> </li>
-
 <li class="list-group-item list-group-item-light menu" id="viewRequest">
   <a href="http://{{ request.get_host }}/internal_user/viewRequests">View request</a> </li>
 
@@ -28,14 +24,8 @@
 <li class="list-group-item list-group-item-light menu" id="viewCloseRequest">
   <a href="http://{{ request.get_host }}/internal_user/viewCloseRequests">View close request</a> </li>
 
-
 <li class="list-group-item list-group-item-light menu" id="createCust">
   <a href="http://{{ request.get_host }}/internal_user/createCustomer">Create customer account</a> </li>
-<li class="list-group-item list-group-item-light menu" id="modifyCust">
-  <a href="http://{{ request.get_host }}/internal_user/initModifyCustomer">Modify customer account</a> </li>
-<li class="list-group-item list-group-item-light menu" id="deleteCust">
-  <a href="http://{{ request.get_host }}/internal_user/deleteCustomer">Close customer account</a> </li>
-
 
 {% endblock menu%}
 

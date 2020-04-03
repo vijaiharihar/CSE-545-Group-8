@@ -19,6 +19,20 @@ import logging
 log = logging.getLogger(__name__)
 from transactions import views as v
 
+def getBaseHtml(request):
+    try:
+        profile_instance = models.Profile.objects.get(user=request.user)
+        if profile_instance.privilege_id.user_type == settings.SB_USER_TYPE_CUSTOMER:
+            basehtml = "customer_homepage.html"
+        elif profile_instance.privilege_id.user_type == settings.SB_USER_TYPE_TIER_1:
+            basehtml = "tier1_homepage.html"
+        elif profile_instance.privilege_id.user_type == settings.SB_USER_TYPE_TIER_2:
+            basehtml = "tier2_homepage.html"
+        else:
+            basehtml = "base.html"
+    except:
+        basehtml = "base.html"
+    return basehtml
 
 # Create your views here.
 def user_home(request):
@@ -136,7 +150,7 @@ def default_fund_deposit(request):
 
 def default_fund_withdraw(request):
     profile_instance = models.Profile.objects.get(user=request.user)
-    if request.user.is_authenticated and request.user.is_active and profile_instance.privilege_id.user_type == "Customer" and profile_instance.flag == 1:
+    if request.user.is_authenticated and request.user.is_active and profile_instance.privilege_id.user_type  == "Customer" and profile_instance.flag == 1:
         return v.fund_withdraw(request)
 
 
@@ -148,5 +162,5 @@ def default_get_statements(request):
 
 def default_fund_transfer(request):
     profile_instance = models.Profile.objects.get(user=request.user)
-    if request.user.is_authenticated and request.user.is_active and profile_instance.privilege_id.user_type == "Customer" and profile_instance.flag == 1:
+    if request.user.is_authenticated and request.user.is_active and profile_instance.privilege_id.user_type != "Admin" and profile_instance.flag == 1:
         return v.fundTransfer(request)
