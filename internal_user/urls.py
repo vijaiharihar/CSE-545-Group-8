@@ -21,20 +21,14 @@ from django.views.generic.base import TemplateView
 app_name = "internal_user"
 
 urlpatterns = [
-    path('initFundDeposit', views.initFundDeposit, name='init-fund-deposit'),
+
     path('searchCustomer', views.searchCustomer, name='search-customer'),
-    path('depositFund', views.depositFund, name='deposit-fund'),
-    path('depositTemplate', views.depositTemplate, name='deposit-template'),
     path('initIssueCheque', views.initIssueCheque, name='init-issue-cheque'),
     path('issueChequeTemplate', views.issueChequeTemplate, name='init-issue-cheque'),
     path('issueCheque', views.issueCheque, name='issue-cheque'),
     path('initViewCustomer', views.initViewCustomer, name='init-view-customer'),
     path('viewCustomer', views.viewCustomer, name='view-customer'),
     path('createCustomer', views.createCustomer, name='create-customer'),
-    path('initModifyCustomer', views.initModifyCustomer, name='init-modify-customer'),
-    path('modifyCustomerTemplate', views.modifyCustomerTemplate, name='modify-customer-template'),
-    path('modifyCustomer', views.modifyCustomer, name='modify-customer'),
-    path('deleteCustomer', views.deleteCustomer, name='delete-customer'),
     path('viewRequests', views.viewRequests, name='view-requests'),
     path('', views.viewRequests, name='view-requests'),
     path('viewInternalRequests', views.viewInternalRequests, name='view-internal-requests'),
