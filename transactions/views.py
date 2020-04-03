@@ -37,10 +37,12 @@ def getBaseHtml(request):
             basehtml = "base.html"
     except:
         basehtml = "base.html"
+    return basehtml
 
 
 def fundTransfer(request):
-
+    basehtml = getBaseHtml(request)
+    print(basehtml)
     if request.method == 'POST':
         form = FundTransferForm(request.POST)
         if form.is_valid():
@@ -94,7 +96,7 @@ def fundTransfer(request):
             return render(request, 'failed.html', {'failure': '403 Error: Account balance too small.'},
                           status=403)
     else:
-        basehtml = getBaseHtml(request)
+
         return render(request, 'fundTransfer.html',{'basehtml':basehtml})
 
 

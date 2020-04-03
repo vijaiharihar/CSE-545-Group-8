@@ -24,9 +24,10 @@ def getBaseHtml(request):
             basehtml = "base.html"
     except:
         basehtml = "base.html"
+    return basehtml
 
 def initIssueCheque(request):
-    context = {'context_page' : 'issue_cheque'}
+    context = {'context_page' : 'issue_cheque', 'basehtml':getBaseHtml(request) }
     return render(request, 'init_issue_cheque.html', context)
 
 def issueChequeTemplate(request):
@@ -45,7 +46,7 @@ def issueCheque(request):
             chequeAmount = form.cleaned_data.get('chequeAmount')
             if account_object.account_balance > chequeAmount:
                 ## backend code goes here
-                cheque = Cheque(recipient=form.cleaned_data.get('recipientName'), amount=form.cleaned_data.get('chequeAmount'))
+                cheque = Cheques(recipient=form.cleaned_data.get('recipientName'), amount=form.cleaned_data.get('chequeAmount'))
                 messages.success(request, f'Cheque Issued successfully {cheque.id}')
                 cheque_id = cheque.id
                 data = {
