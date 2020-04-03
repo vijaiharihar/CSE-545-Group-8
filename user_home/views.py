@@ -32,6 +32,7 @@ def getBaseHtml(request):
             basehtml = "base.html"
     except:
         basehtml = "base.html"
+    return basehtml
 
 # Create your views here.
 def user_home(request):
