@@ -7,7 +7,7 @@ from internal_user.approvals import _viewRequests, _updateRequest, _view_updates
 from internal_user.utils import render_to_pdf,verify_file
 from home import models
 from django.contrib.auth.models import User
-from home.models import Account, Cheque
+from home.models import Account, Cheques
 from transactions.models import Transaction
 import requests
 
