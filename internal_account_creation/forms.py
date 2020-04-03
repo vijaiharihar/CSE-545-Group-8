@@ -23,6 +23,9 @@ class ExtendedUserCreationForm(UserCreationForm):
         return user
 
 class UserProfileForm(forms.ModelForm):
+    zip_code=forms.IntegerField(max_value=99999,min_value=10000)
+    mobile_number=forms.IntegerField(max_value=9999999999,min_value=1000000000)
+    ssn=forms.IntegerField(max_value=999999999,min_value=100000000)
     class Meta:
         model = models.Profile
         fields=('street_address', 'city', 'state', 'zip_code', 'mobile_number', 'birthdate', 'ssn',)
