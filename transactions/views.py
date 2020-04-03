@@ -21,9 +21,26 @@ from transactions.models import Pending_Transactions, Transaction
 from home.models import Account
 from transactions.forms import FundDepositWithdrawForm
 import mimetypes
+from home import models
+
+
+def getBaseHtml(request):
+    try:
+        profile_instance = models.Profile.objects.get(user=request.user)
+        if profile_instance.privilege_id.user_type == settings.SB_USER_TYPE_CUSTOMER:
+            basehtml = "customer_homepage.html"
+        elif profile_instance.privilege_id.user_type == settings.SB_USER_TYPE_TIER_1:
+            basehtml = "tier1_homepage.html"
+        elif profile_instance.privilege_id.user_type == settings.SB_USER_TYPE_TIER_2:
+            basehtml = "tier2_homepage.html"
+        else:
+            basehtml = "base.html"
+    except:
+        basehtml = "base.html"
 
 
 def fundTransfer(request):
+
     if request.method == 'POST':
         form = FundTransferForm(request.POST)
         if form.is_valid():
@@ -77,7 +94,8 @@ def fundTransfer(request):
             return render(request, 'failed.html', {'failure': '403 Error: Account balance too small.'},
                           status=403)
     else:
-        return render(request, 'fundTransfer.html')
+        basehtml = getBaseHtml(request)
+        return render(request, 'fundTransfer.html',{'basehtml':basehtml})
 
 
 def fund_deposit(request):
@@ -131,7 +149,8 @@ def fund_deposit(request):
         accounts = []
         for account in accounts_list:
             accounts.append({"number": account.account_number, "type": account.account_type})
-        return render(request, 'deposit.html', {"accounts": accounts})
+        basehtml = getBaseHtml(request)
+        return render(request, 'deposit.html', {"accounts": accounts,'basehtml':basehtml})
     else:
         return render(request, 'failed.html', {'failure': '405 Error: Method not supported.'}, status=405)
 
