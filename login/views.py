@@ -22,7 +22,7 @@ import logging
 log = logging.getLogger(__name__)
 from django.conf import settings
 from home import models
-
+from django.core.exceptions import ObjectDoesNotExist
 
 #try wrong account list ------ username: number of try
 block_wait_list={}
@@ -39,11 +39,14 @@ def login_user(request):
         form = LoginForm(request.POST)
 
         if form.is_valid():
-            userObj = authenticate(username=form.cleaned_data['user_id'], password=form.cleaned_data['password'])
+            userObj = authenticate(username=form.cleaned_data['user_id'], password=form.cleaned_data['password'])            
             request.session['username'] = form.cleaned_data['user_id']
             request.session['password'] = form.cleaned_data['password']
-            user_instance=User.objects.get(username=form.cleaned_data['user_id'])
-            profile_instance=Profile.objects.get(user=user_instance)
+            try:
+                user_instance=User.objects.get(username=form.cleaned_data['user_id'])            
+                profile_instance=Profile.objects.get(user=user_instance)
+            except User.DoesNotExist:
+                return HttpResponse("Login Failed!!")
             #check block list
             if form.cleaned_data['user_id'] in block_list:
                 #check block time
