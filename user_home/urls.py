@@ -30,5 +30,6 @@ urlpatterns = [
     path('delete_account/',views.deleteAccount, name='delete_account'),
     path('deposit/',views.default_fund_deposit, name='deposit'),
     path('withdraw/',views.default_fund_withdraw, name='withdraw'),
-    path('getStatement/',views.default_get_statements, name='getStatement')
+    path('getStatement/',views.default_get_statements, name='getStatement'),
+    path('fundTransfer/',views.default_fund_transfer, name='transfer')
 ]

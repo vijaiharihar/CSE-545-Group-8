@@ -31,7 +31,6 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
-     'django_twilio',
     'admin_app.apps.AdminAppConfig',
     'create_account.apps.CreateAccountConfig',
     'user_home.apps.UserHomeConfig',

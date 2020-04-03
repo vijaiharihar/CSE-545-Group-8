@@ -4,7 +4,7 @@
         <h2>Deposit</h2><br><br>
     </div>
     <div id="depositForm" class="form-group">
-        <form action='/transaction/deposit' method="post" onsubmit="return validateDeposit()">
+        <form action='/user_home/deposit/' method="post" onsubmit="return validateDeposit()">
             {% csrf_token %}
             <label for="accountId">To Account:</label>
             <select id="accountId" class="form-control" name="accountId">
